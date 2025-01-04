@@ -2,31 +2,7 @@
     <lightning-quick-action-panel header="Project Phase Editor">
         <template for:each={phases} for:item="phase">
             <div key={phase.name} class="slds-p-bottom_medium">
-                <div>{phase.name}</div>
-                <div class="slds-grid slds-gutters">
-                    <div class="slds-col">
-                        <lightning-input
-                            type="number"
-                            label="Duration"
-                            value={phase.duration}
-                        ></lightning-input>
-                    </div>
-                    <div class="slds-col">
-                        <lightning-input
-                            type="date"
-                            label="Start Date"
-                            value={phase.startDate}
-                        ></lightning-input>
-                    </div>
-
-                    <div class="slds-col">
-                        <lightning-input
-                            type="date"
-                            label="End Date"
-                            value={phase.endDate}
-                        ></lightning-input>
-                    </div>
-                </div>
+                <c-project-phase-row-edit phase={phase}></c-project-phase-row-edit>
             </div>
         </template>
         <div slot="footer">
