@@ -1,6 +1,41 @@
 <template>
     <lightning-quick-action-panel header="Project Phase Editor">
-        {recordId}
-        <div lwc:if={project.data}>{project.data.fields.Name.value}</div>
+        <template for:each={phases} for:item="phase">
+            <div key={phase.name} class="slds-p-bottom_medium">
+                <div>{phase.name}</div>
+                <div class="slds-grid slds-gutters">
+                    <div class="slds-col">
+                        <lightning-input
+                            type="number"
+                            label="Duration"
+                            value={phase.duration}
+                        ></lightning-input>
+                    </div>
+                    <div class="slds-col">
+                        <lightning-input
+                            type="date"
+                            label="Start Date"
+                            value={phase.startDate}
+                        ></lightning-input>
+                    </div>
+
+                    <div class="slds-col">
+                        <lightning-input
+                            type="date"
+                            label="End Date"
+                            value={phase.endDate}
+                        ></lightning-input>
+                    </div>
+                </div>
+            </div>
+        </template>
+        <div slot="footer">
+            <lightning-button variant="neutral" label="Cancel"></lightning-button>
+            <lightning-button
+                variant="brand"
+                label="Save"
+                class="slds-m-left_x-small"
+            ></lightning-button>
+        </div>
     </lightning-quick-action-panel>
 </template>
