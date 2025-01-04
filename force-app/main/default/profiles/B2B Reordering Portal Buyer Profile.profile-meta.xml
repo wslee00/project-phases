@@ -3,6 +3,11 @@
     <custom>true</custom>
     <fieldPermissions>
         <editable>false</editable>
+        <field>Project_Phase__c.Duration__c</field>
+        <readable>false</readable>
+    </fieldPermissions>
+    <fieldPermissions>
+        <editable>false</editable>
         <field>Project_Phase__c.End_Date__c</field>
         <readable>false</readable>
     </fieldPermissions>
@@ -27,6 +32,10 @@
     <layoutAssignments>
         <layout>Project__c-Project Layout</layout>
     </layoutAssignments>
+    <tabVisibilities>
+        <tab>Project__c</tab>
+        <visibility>DefaultOff</visibility>
+    </tabVisibilities>
     <userLicense>External Apps Login</userLicense>
     <userPermissions>
         <enabled>true</enabled>
