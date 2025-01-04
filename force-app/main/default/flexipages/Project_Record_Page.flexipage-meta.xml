@@ -9,6 +9,9 @@
                         <valueListItems>
                             <value>Edit</value>
                         </valueListItems>
+                        <valueListItems>
+                            <value>Project__c.Edit_Phases</value>
+                        </valueListItems>
                     </valueList>
                 </componentInstanceProperties>
                 <componentInstanceProperties>

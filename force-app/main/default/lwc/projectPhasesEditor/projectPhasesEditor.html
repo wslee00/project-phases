@@ -1,0 +1,6 @@
+<template>
+    <lightning-quick-action-panel header="Project Phase Editor">
+        {recordId}
+        <div lwc:if={project.data}>{project.data.fields.Name.value}</div>
+    </lightning-quick-action-panel>
+</template>
