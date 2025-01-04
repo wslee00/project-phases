@@ -2,7 +2,10 @@
     <lightning-quick-action-panel header="Project Phase Editor">
         <template for:each={phases} for:item="phase">
             <div key={phase.name} class="slds-p-bottom_medium">
-                <c-project-phase-row-edit phase={phase}></c-project-phase-row-edit>
+                <c-project-phase-row-edit
+                    phase={phase}
+                    onphasechange={handlePhaseChange}
+                ></c-project-phase-row-edit>
             </div>
         </template>
         <div slot="footer">

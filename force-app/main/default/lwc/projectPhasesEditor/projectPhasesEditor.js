@@ -28,4 +28,14 @@ export default class ProjectPhasesEditor extends LightningElement {
 
     @wire(getRecord, { recordId: '$recordId', fields: [PROJECT_NAME_FIELD] })
     project;
+
+    handlePhaseChange(event) {
+        const incomingPhase = event.detail;
+        this.phases = this.phases.map((phase) => {
+            if (incomingPhase.name !== phase.name) {
+                return phase;
+            }
+            return incomingPhase;
+        });
+    }
 }

@@ -4,8 +4,10 @@ export default class ProjectPhaseRowEdit extends LightningElement {
     @api phase;
 
     handleDurationChange(event) {
+        if (!event.detail.value) {
+            return;
+        }
         const duration = parseInt(event.detail.value, 10);
-        console.log('add to date', this._addToDate(this.phase.startDate, duration));
         this.dispatchEvent(
             new CustomEvent('phasechange', {
                 detail: {
