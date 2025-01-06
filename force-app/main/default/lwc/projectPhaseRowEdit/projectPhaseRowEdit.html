@@ -1,30 +1,32 @@
 <template>
-    <div>{phase.name}</div>
-    <div class="slds-grid slds-gutters">
-        <div class="slds-col">
-            <lightning-input
-                type="number"
-                label="Duration"
-                value={phase.duration}
-                onchange={handleDurationChange}
-            ></lightning-input>
-        </div>
-        <div class="slds-col">
-            <lightning-input
-                type="date"
-                label="Start Date"
-                value={phase.startDate}
-                onchange={handleStartDateChange}
-            ></lightning-input>
-        </div>
+    <template lwc:if={isScriptLoaded}>
+        <div>{phase.name}</div>
+        <div class="slds-grid slds-gutters">
+            <div class="slds-col">
+                <lightning-input
+                    type="number"
+                    label="Duration"
+                    value={phase.duration}
+                    onchange={handleDurationChange}
+                ></lightning-input>
+            </div>
+            <div class="slds-col">
+                <lightning-input
+                    type="date"
+                    label="Start Date"
+                    value={startDate}
+                    onchange={handleStartDateChange}
+                ></lightning-input>
+            </div>
 
-        <div class="slds-col">
-            <lightning-input
-                type="date"
-                label="End Date"
-                value={phase.endDate}
-                onchange={handleEndDateChange}
-            ></lightning-input>
+            <div class="slds-col">
+                <lightning-input
+                    type="date"
+                    label="End Date"
+                    value={endDate}
+                    onchange={handleEndDateChange}
+                ></lightning-input>
+            </div>
         </div>
-    </div>
+    </template>
 </template>

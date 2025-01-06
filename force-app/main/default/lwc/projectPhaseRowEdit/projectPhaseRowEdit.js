@@ -1,7 +1,16 @@
+/* eslint-disable no-undef */
 import { LightningElement, api } from 'lwc';
+import { loadScript } from 'lightning/platformResourceLoader';
+import dayjs_resource from '@salesforce/resourceUrl/dayjs';
 
 export default class ProjectPhaseRowEdit extends LightningElement {
     @api phase;
+    isScriptLoaded = false;
+
+    async connectedCallback() {
+        await loadScript(this, dayjs_resource);
+        this.isScriptLoaded = true;
+    }
 
     handleDurationChange(event) {
         if (!event.detail.value) {
@@ -13,48 +22,52 @@ export default class ProjectPhaseRowEdit extends LightningElement {
                 detail: {
                     ...this.phase,
                     duration,
-                    endDate: this._addToDate(this.phase.startDate, duration),
+                    endDate: dayjs(this.phase.startDate).add(duration, 'day').toDate(),
                 },
             }),
         );
     }
 
+    get startDate() {
+        return dayjs(this.phase.startDate).format('YYYY-MM-DD');
+    }
+
+    get endDate() {
+        return dayjs(this.phase.endDate).format('YYYY-MM-DD');
+    }
+
     handleStartDateChange(event) {
-        this._handleDateChange({ startDate: event.detail.value });
+        const dateString = event.detail.value;
+        if (!dateString) {
+            return;
+        }
+        this._handleDateChange({ startDate: dayjs(event.detail.value).toDate() });
     }
 
     handleEndDateChange(event) {
-        this._handleDateChange({ endDate: event.detail.value });
+        const dateString = event.detail.value;
+        if (!dateString) {
+            return;
+        }
+        this._handleDateChange({ endDate: dayjs(event.detail.value).toDate() });
     }
 
     _handleDateChange(changes) {
-        const startDateString = changes.startDate || this.phase.startDate;
-        const endDateString = changes.endDate || this.phase.endDate;
-        if (!startDateString || !endDateString) {
+        const startDate = changes.startDate || this.phase.startDate;
+        const endDate = changes.endDate || this.phase.endDate;
+        if (!startDate || !endDate) {
             return;
         }
-        let startDate = new Date(startDateString);
-        let endDate = new Date(endDateString);
-        const duration = Math.round((endDate - startDate) / (1000 * 60 * 60 * 24));
+        const duration = dayjs(endDate).diff(startDate, 'day');
         this.dispatchEvent(
             new CustomEvent('phasechange', {
                 detail: {
                     ...this.phase,
                     duration,
-                    startDate: startDateString,
-                    endDate: endDateString,
+                    startDate: startDate,
+                    endDate: endDate,
                 },
             }),
         );
-    }
-
-    _addToDate(dateString, days) {
-        let result = new Date(dateString);
-        result.setDate(result.getDate() + days + 1);
-
-        const offset = result.getTimezoneOffset();
-        // https://stackoverflow.com/questions/23593052/format-javascript-date-as-yyyy-mm-dd#comment58447831_29774197
-        result = new Date(result.getTime() - offset * 60 * 1000);
-        return result.toISOString().split('T')[0];
     }
 }
