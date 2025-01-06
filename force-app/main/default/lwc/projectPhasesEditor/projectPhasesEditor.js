@@ -1,5 +1,6 @@
+/* eslint-disable no-undef */
 import { getRecord } from 'lightning/uiRecordApi';
-import { api, LightningElement, wire } from 'lwc';
+import { api, LightningElement, wire, track } from 'lwc';
 import { loadScript } from 'lightning/platformResourceLoader';
 import dayjs_resource from '@salesforce/resourceUrl/dayjs';
 import PROJECT_NAME_FIELD from '@salesforce/schema/Project__c.Name';
@@ -7,7 +8,7 @@ import PROJECT_NAME_FIELD from '@salesforce/schema/Project__c.Name';
 export default class ProjectPhasesEditor extends LightningElement {
     @api recordId;
 
-    phases = [
+    @track phases = [
         {
             name: 'Phase 1',
             duration: 9,
@@ -37,11 +38,21 @@ export default class ProjectPhasesEditor extends LightningElement {
 
     handlePhaseChange(event) {
         const incomingPhase = event.detail;
-        this.phases = this.phases.map((phase) => {
-            if (incomingPhase.name !== phase.name) {
-                return phase;
+        const incomingPhaseIndex = this.phases.findIndex(
+            (phase) => phase.name === incomingPhase.name,
+        );
+        const oldPhase = this.phases[incomingPhaseIndex];
+        this.phases[incomingPhaseIndex] = incomingPhase;
+        if (incomingPhase.startDate !== oldPhase.startDate) {
+            if (incomingPhaseIndex > 0) {
+                let priorPhase = incomingPhase;
+                for (let i = incomingPhaseIndex - 1; i >= 0; i--) {
+                    const phase = this.phases[i];
+                    phase.endDate = dayjs(priorPhase.startDate).add(-1, 'day').toDate();
+                    phase.startDate = dayjs(phase.endDate).add(-phase.duration, 'day').toDate();
+                    priorPhase = phase;
+                }
             }
-            return incomingPhase;
-        });
+        }
     }
 }
