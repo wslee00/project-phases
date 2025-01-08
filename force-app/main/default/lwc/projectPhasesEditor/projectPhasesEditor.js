@@ -1,39 +1,32 @@
 /* eslint-disable no-undef */
-import { getRecord } from 'lightning/uiRecordApi';
 import { api, LightningElement, wire, track } from 'lwc';
 import { loadScript } from 'lightning/platformResourceLoader';
 import dayjs_resource from '@salesforce/resourceUrl/dayjs';
-import PROJECT_NAME_FIELD from '@salesforce/schema/Project__c.Name';
+import getProjectPhases from '@salesforce/apex/ProjectPhasesEditorController.getProjectPhases';
 
 export default class ProjectPhasesEditor extends LightningElement {
     @api recordId;
 
-    @track phases = [
-        {
-            name: 'Phase 1',
-            duration: 9,
-            startDate: new Date('2025-01-01'),
-            endDate: new Date('2025-01-10'),
-        },
-        {
-            name: 'Phase 2',
-            duration: 9,
-            startDate: new Date('2025-01-11'),
-            endDate: new Date('2025-01-20'),
-        },
-        {
-            name: 'Phase 3',
-            duration: 9,
-            startDate: new Date('2025-01-21'),
-            endDate: new Date('2025-01-30'),
-        },
-    ];
+    @track phases;
 
-    @wire(getRecord, { recordId: '$recordId', fields: [PROJECT_NAME_FIELD] })
-    project;
+    _isScriptLoaded = false;
+    _phasesFromDb = [];
+
+    @wire(getProjectPhases, { projectId: '$recordId' })
+    processGetProjectPhases({ error, data }) {
+        if (data) {
+            this._phasesFromDb = data;
+            this._postProcessPhases();
+        }
+        if (error) {
+            console.log(error);
+        }
+    }
 
     async connectedCallback() {
         await loadScript(this, dayjs_resource);
+        this._isScriptLoaded = true;
+        this._postProcessPhases();
     }
 
     handlePhaseChange(event) {
@@ -48,6 +41,21 @@ export default class ProjectPhasesEditor extends LightningElement {
         } else if (incomingPhase.endDate !== oldPhase.endDate) {
             this._shiftSubsequentPhases(incomingPhaseIndex, incomingPhase);
         }
+    }
+
+    _postProcessPhases() {
+        if (!this._isScriptLoaded || this._phasesFromDb.length === 0) {
+            return;
+        }
+
+        this.phases = this._phasesFromDb.map((phase) => {
+            return {
+                name: phase.Name,
+                duration: phase.Duration__c,
+                startDate: dayjs(phase.Start_Date__c).toDate(),
+                endDate: dayjs(phase.End_Date__c).toDate(),
+            };
+        });
     }
 
     _shiftPriorPhases(incomingPhaseIndex, incomingPhase) {
