@@ -44,14 +44,32 @@ export default class ProjectPhasesEditor extends LightningElement {
         const oldPhase = this.phases[incomingPhaseIndex];
         this.phases[incomingPhaseIndex] = incomingPhase;
         if (incomingPhase.startDate !== oldPhase.startDate) {
-            if (incomingPhaseIndex > 0) {
-                let priorPhase = incomingPhase;
-                for (let i = incomingPhaseIndex - 1; i >= 0; i--) {
-                    const phase = this.phases[i];
-                    phase.endDate = dayjs(priorPhase.startDate).add(-1, 'day').toDate();
-                    phase.startDate = dayjs(phase.endDate).add(-phase.duration, 'day').toDate();
-                    priorPhase = phase;
-                }
+            this._shiftPriorPhases(incomingPhaseIndex, incomingPhase);
+        } else if (incomingPhase.endDate !== oldPhase.endDate) {
+            this._shiftSubsequentPhases(incomingPhaseIndex, incomingPhase);
+        }
+    }
+
+    _shiftPriorPhases(incomingPhaseIndex, incomingPhase) {
+        if (incomingPhaseIndex > 0) {
+            let priorPhase = incomingPhase;
+            for (let i = incomingPhaseIndex - 1; i >= 0; i--) {
+                const phase = this.phases[i];
+                phase.endDate = dayjs(priorPhase.startDate).add(-1, 'day').toDate();
+                phase.startDate = dayjs(phase.endDate).add(-phase.duration, 'day').toDate();
+                priorPhase = phase;
+            }
+        }
+    }
+
+    _shiftSubsequentPhases(incomingPhaseIndex, incomingPhase) {
+        if (incomingPhaseIndex < this.phases.length - 1) {
+            let nextPhase = incomingPhase;
+            for (let i = incomingPhaseIndex + 1; i < this.phases.length; i++) {
+                const phase = this.phases[i];
+                phase.startDate = dayjs(nextPhase.endDate).add(1, 'day').toDate();
+                phase.endDate = dayjs(phase.startDate).add(phase.duration, 'day').toDate();
+                nextPhase = phase;
             }
         }
     }
