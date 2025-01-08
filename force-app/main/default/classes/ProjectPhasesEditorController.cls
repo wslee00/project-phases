@@ -11,4 +11,9 @@ public with sharing class ProjectPhasesEditorController {
             ORDER BY Start_Date__c
         ];
     }
+
+    @AuraEnabled
+    public static void saveProjectPhases(List<Project_Phase__c> phases) {
+        update phases;
+    }
 }

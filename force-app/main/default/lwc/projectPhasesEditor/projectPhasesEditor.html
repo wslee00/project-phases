@@ -1,6 +1,7 @@
 <template>
     <lightning-quick-action-panel header="Project Phase Editor">
-        <template lwc:if={phases}>
+        <div lwc:if={phases} class="slds-is-relative">
+            <lightning-spinner lwc:if={isProcessing} size="medium"></lightning-spinner>
             <template for:each={phases} for:item="phase">
                 <div key={phase.name} class="slds-p-bottom_medium">
                     <c-project-phase-row-edit
@@ -9,13 +10,20 @@
                     ></c-project-phase-row-edit>
                 </div>
             </template>
-        </template>
+        </div>
         <div slot="footer">
-            <lightning-button variant="neutral" label="Cancel"></lightning-button>
+            <lightning-button
+                variant="neutral"
+                label="Cancel"
+                onclick={handleCancel}
+                disabled={isProcessing}
+            ></lightning-button>
             <lightning-button
                 variant="brand"
                 label="Save"
                 class="slds-m-left_x-small"
+                onclick={handleSave}
+                disabled={isProcessing}
             ></lightning-button>
         </div>
     </lightning-quick-action-panel>
